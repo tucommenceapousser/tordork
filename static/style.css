@@ -1,0 +1,155 @@
+/* Fond sombre avec couleurs fluo */
+body {
+    background-color: #111;
+    color: #00FF00;
+    font-family: "Courier New", Courier, monospace;
+    padding: 20px;
+    animation: fadeIn 1s ease-out;
+}
+
+/* Animation d'apparition du titre */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Titre principal avec effet de texte lumineux */
+h1 {
+    text-align: center;
+    color: #00FF00;
+    font-size: 2.5em;
+    text-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00;
+    animation: titleEffect 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleEffect {
+    0% { text-shadow: 0 0 5px #00FF00; }
+    100% { text-shadow: 0 0 20px #FF00FF, 0 0 30px #FF00FF; }
+}
+
+/* Effet de saisie pour les formulaires */
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #333;
+    border: 1px solid #00FF00;
+    color: #00FF00;
+    font-size: 1.2em;
+    border-radius: 5px;
+    opacity: 0;
+    animation: fadeInFormElements 2s forwards;
+}
+
+button {
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #00FF00;
+    color: #111;
+}
+
+@keyframes fadeInFormElements {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Liste des résultats avec animation d'apparition */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+    animation: fadeInResults 2s ease-out;
+}
+
+@keyframes fadeInResults {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+li {
+    margin: 10px 0;
+}
+
+a {
+    color: #00FF00;
+    text-decoration: none;
+    border-bottom: 1px solid #00FF00;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #FF00FF;
+}
+
+/* Effet de saisie pour le texte de la recherche */
+h2 {
+    color: #FF00FF;
+    text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF;
+    animation: typing 3s steps(30) 1s 1 normal both;
+}
+
+@keyframes typing {
+    0% { width: 0; }
+    100% { width: 100%; }
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Bouton de téléchargement avec effet dynamique */
+.download-btn {
+    background-color: #FF00FF;
+    border: 1px solid #FF00FF;
+    color: #111;
+    font-size: 1.2em;
+    padding: 10px 20px;
+    margin-top: 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    opacity: 0;
+    animation: fadeInDownloadBtn 2s forwards;
+}
+
+.download-btn:hover {
+    background-color: #00FF00;
+    color: #111;
+}
+
+@keyframes fadeInDownloadBtn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Effet des erreurs avec animations */
+.error {
+    color: #FF0000;
+    text-align: center;
+    font-size: 1.2em;
+    animation: shake 0.5s ease-out;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
+
+/* Animation pour le formulaire et les éléments de la page */
+form {
+    margin: 20px auto;
+    padding: 10px;
+    max-width: 400px;
+    border: 2px solid #00FF00;
+    border-radius: 5px;
+    opacity: 0;
+    animation: fadeInForm 2s forwards;
+}
+
+@keyframes fadeInForm {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
