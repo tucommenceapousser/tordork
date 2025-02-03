@@ -3,32 +3,18 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
-from dotenv import load_dotenv
 
-# Charger les variables d'environnement depuis .env
-load_dotenv()
-
-# Initialiser l'application Flask
 app = Flask(__name__)
 
-# URL Ahmia en .onion (Tor)
-AHMIA_ONION_URL = "https://ahmia.fi/search/?q="
+# URL Ahmia classique (non .onion)
+AHMIA_URL = "https://ahmia.fi/search/?q="  # Changer en https pour sécuriser la connexion
 
-# Récupérer les variables d'environnement pour le proxy
-PROXY_HOST = os.getenv("PROXY_HOST", "127.0.0.1")  # Utilise 127.0.0.1 par défaut
-PROXY_PORT = os.getenv("PROXY_PORT", "5000")  # Utilise 9050 par défaut
-PROXY_URL = f"socks5h://{PROXY_HOST}:{PROXY_PORT}"
-
-# Fonction pour la recherche .onion
+# Fonction pour la recherche
 def search_onion_sites(keyword, limit=10):
-    url = f"{AHMIA_ONION_URL}{keyword}"
-    proxies = {
-        "http": PROXY_URL,
-        "https": PROXY_URL,
-    }
+    url = f"{AHMIA_URL}{keyword}"
 
     try:
-        response = requests.get(url, proxies=proxies, timeout=15)
+        response = requests.get(url, timeout=15)  # Pas besoin de proxy ici
 
         if response.status_code != 200:
             return [], f"❌ Erreur : Accès à Ahmia échoué ! (Code {response.status_code})"
