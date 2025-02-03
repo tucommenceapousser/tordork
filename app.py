@@ -3,18 +3,28 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 
+# Charger les variables d'environnement depuis .env
+load_dotenv()
+
+# Initialiser l'application Flask
 app = Flask(__name__)
 
 # URL Ahmia en .onion (Tor)
 AHMIA_ONION_URL = "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q="
 
+# Récupérer les variables d'environnement pour le proxy
+PROXY_HOST = os.getenv("PROXY_HOST", "127.0.0.1")  # Utilise 127.0.0.1 par défaut
+PROXY_PORT = os.getenv("PROXY_PORT", "9050")  # Utilise 9050 par défaut
+PROXY_URL = f"socks5h://{PROXY_HOST}:{PROXY_PORT}"
+
 # Fonction pour la recherche .onion
 def search_onion_sites(keyword, limit=10):
     url = f"{AHMIA_ONION_URL}{keyword}"
     proxies = {
-        "http": "socks5h://127.0.0.1:9050",
-        "https": "socks5h://127.0.0.1:9050",
+        "http": PROXY_URL,
+        "https": PROXY_URL,
     }
 
     try:
