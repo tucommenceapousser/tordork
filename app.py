@@ -12,7 +12,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # URL Ahmia en .onion (Tor)
-AHMIA_ONION_URL = "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q="
+AHMIA_ONION_URL = "https://ahmia.fi/search/?q="
 
 # Récupérer les variables d'environnement pour le proxy
 PROXY_HOST = os.getenv("PROXY_HOST", "127.0.0.1")  # Utilise 127.0.0.1 par défaut
