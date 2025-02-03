@@ -16,7 +16,7 @@ AHMIA_ONION_URL = "https://ahmia.fi/search/?q="
 
 # Récupérer les variables d'environnement pour le proxy
 PROXY_HOST = os.getenv("PROXY_HOST", "127.0.0.1")  # Utilise 127.0.0.1 par défaut
-PROXY_PORT = os.getenv("PROXY_PORT", "80")  # Utilise 9050 par défaut
+PROXY_PORT = os.getenv("PROXY_PORT", "5000")  # Utilise 9050 par défaut
 PROXY_URL = f"socks5h://{PROXY_HOST}:{PROXY_PORT}"
 
 # Fonction pour la recherche .onion
