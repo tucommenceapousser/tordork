@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Darknet .onion Finder - TrHacknon</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🔍 Recherche de sites .onion via Ahmia sur Tor</h1>
+    <form method="POST">
+        <label for="keyword">Mot-clé de recherche :</label>
+        <input type="text" name="keyword" id="keyword" required>
+        
+        <label for="limit">Nombre de résultats :</label>
+        <select name="limit" id="limit" required>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+        </select>
+
+        <button type="submit">Rechercher</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if results %}
+        <h2>Sites .onion trouvés :</h2>
+        <ul>
+            {% for site in results %}
+                <li><a href="{{ site }}" target="_blank">{{ site }}</a></li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('download_results', keyword=request.form['keyword']) }}" class="download-btn">Télécharger les résultats</a>
+    {% endif %}
+  <script>
+    // Effet de type console pour le titre de la page
+    document.addEventListener("DOMContentLoaded", function() {
+        const title = "Recherche de sites .onion via Ahmia sur Tor";
+        let i = 0;
+        const speed = 100;
+        const element = document.querySelector("h1");
+
+        function typeWriter() {
+            if (i < title.length) {
+                element.innerHTML += title.charAt(i);
+                i++;
+                setTimeout(typeWriter, speed);
+            }
+        }
+
+        typeWriter();
+    });
+</script>
+</body>
+</html>
