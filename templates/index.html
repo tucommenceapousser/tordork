@@ -7,20 +7,28 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>🔍 Recherche de sites .onion via Ahmia sur Tor</h1>
+    <h1 id="typing-title"></h1>
+
     <form method="POST">
-        <label for="keyword">Mot-clé de recherche :</label>
-        <input type="text" name="keyword" id="keyword" required>
-        
-        <label for="limit">Nombre de résultats :</label>
-        <select name="limit" id="limit" required>
+        <label for="keyword">🔍 Mot-clé :</label>
+        <input type="text" name="keyword" id="keyword" required placeholder="Ex: bitcoin, forum, shop...">
+
+        <label for="engine">🕵️ Moteur de recherche :</label>
+        <select name="engine" id="engine">
+            <option value="ahmia">Ahmia</option>
+            <option value="onionsearch">OnionSearch</option>
+            <option value="darksearch">DarkSearch</option>
+        </select>
+
+        <label for="limit">🔢 Nombre de résultats :</label>
+        <select name="limit" id="limit">
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="20">20</option>
             <option value="50">50</option>
         </select>
 
-        <button type="submit">Rechercher</button>
+        <button type="submit">🚀 Lancer la recherche</button>
     </form>
 
     {% if error %}
@@ -28,32 +36,41 @@
     {% endif %}
 
     {% if results %}
-        <h2>Sites .onion trouvés :</h2>
+        <h2>📌 Résultats :</h2>
         <ul>
-            {% for site in results %}
-                <li><a href="{{ site }}" target="_blank">{{ site }}</a></li>
+            {% for moteur, liens in results.items() %}
+                <li><strong>{{ moteur }}</strong></li>
+                <ul>
+                    {% for lien in liens %}
+                        <li><a href="{{ lien }}" target="_blank">{{ lien }}</a></li>
+                    {% endfor %}
+                </ul>
             {% endfor %}
         </ul>
-        <a href="{{ url_for('download_results', keyword=request.form['keyword']) }}" class="download-btn">Télécharger les résultats</a>
+
+        <a href="{{ url_for('download_results', keyword=request.form['keyword']) }}" class="download-btn">
+            📥 Télécharger les résultats
+        </a>
     {% endif %}
-  <script>
-    // Effet de type console pour le titre de la page
-    document.addEventListener("DOMContentLoaded", function() {
-        const title = "Recherche de sites .onion via Ahmia sur Tor";
-        let i = 0;
-        const speed = 100;
-        const element = document.querySelector("h1");
 
-        function typeWriter() {
-            if (i < title.length) {
-                element.innerHTML += title.charAt(i);
-                i++;
-                setTimeout(typeWriter, speed);
+    <script>
+        // Effet de frappe pour le titre
+        document.addEventListener("DOMContentLoaded", function() {
+            const title = "🔍 Recherche de sites .onion";
+            let i = 0;
+            const speed = 80;
+            const element = document.getElementById("typing-title");
+
+            function typeWriter() {
+                if (i < title.length) {
+                    element.innerHTML += title.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, speed);
+                }
             }
-        }
 
-        typeWriter();
-    });
-</script>
+            typeWriter();
+        });
+    </script>
 </body>
 </html>
