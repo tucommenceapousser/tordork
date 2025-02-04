@@ -3,14 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Résultats .onion</title>
+    <title>🔍 Résultats de la recherche - TrHacknon</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>🔍 Résultats de la recherche</h1>
-    <ul>
-        <li><a href="#">Site 1</a></li>
-        <li><a href="#">Site 2</a></li>
-        <li><a href="#">Site 3</a></li>
-    </ul>
+
+    {% if results %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Moteur de recherche</th>
+                    <th>Site .onion trouvé</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for moteur, liens in results.items() %}
+                    {% for lien in liens %}
+                        <tr>
+                            <td>{{ moteur }}</td>
+                            <td><a href="{{ lien }}" target="_blank">{{ lien }}</a></td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('download_results', keyword=keyword) }}" class="download-btn">
+            📥 Télécharger les résultats
+        </a>
+    {% else %}
+        <p class="error">❌ Aucun site trouvé.</p>
+    {% endif %}
+
 </body>
 </html>
