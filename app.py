@@ -6,68 +6,135 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-# Moteurs de recherche dark web
-SEARCH_ENGINES = {
-    "Ahmia": "https://ahmia.fi/search/?q=",
-    "OnionLand": "https://onionlandsearchengine.com/search?q=",
-    "Phobos": "https://phobos.engineering/?q=",
-}
+# URL de base pour Ahmia
+AHMIA_URL = "https://ahmia.fi/search/?q="  # Changer en https pour sécuriser la connexion
 
-# Fonction pour rechercher sur plusieurs moteurs
-def search_onion_sites(keyword, limit=10):
-    results = []
-    errors = []
+# Exemple de moteurs de recherche (les autres moteurs doivent être ajoutés)
+ONIONSEARCH_URL = "https://onionsearchengine.com/search?q="
+DARKSEARCH_URL = "https://darksearch.io/search?q="
 
-    for engine, base_url in SEARCH_ENGINES.items():
-        try:
-            url = f"{base_url}{keyword}"
-            response = requests.get(url, timeout=15)
+# Fonction de recherche pour Ahmia
+def search_onion_sites_ahmia(keyword, limit=10):
+    url = f"{AHMIA_URL}{keyword}"
 
-            if response.status_code != 200:
-                errors.append(f"❌ {engine} inaccessible (Code {response.status_code})")
-                continue
-
-            soup = BeautifulSoup(response.text, "html.parser")
-
-            for link in soup.find_all("a", href=True):
-                href = link["href"]
-                if ".onion" in href:
+    try:
+        response = requests.get(url, timeout=15)
+        if response.status_code != 200:
+            return [], f"❌ Erreur Ahmia : Accès échoué (Code {response.status_code})"
+        
+        soup = BeautifulSoup(response.text, "html.parser")
+        results = []
+        
+        # Extraction des liens .onion
+        for link in soup.find_all("a", href=True):
+            href = link["href"]
+            if ".onion" in href:
+                if href.startswith("/search/redirect?"):
+                    match = re.search(r"redirect_url=(http[s]?://[a-z0-9]+\.onion)", href)
+                    if match:
+                        onion_url = match.group(1)
+                        if onion_url not in results:
+                            results.append(onion_url)
+                else:
                     if href not in results:
-                        results.append({"url": href, "source": engine})
+                        results.append(href)
+            
+            if len(results) >= limit:
+                break
 
-                if len(results) >= limit:
-                    break
+        return results, None
 
-        except requests.RequestException as e:
-            errors.append(f"❌ Erreur {engine} : {e}")
+    except requests.RequestException as e:
+        return [], f"❌ Erreur réseau Ahmia : {e}"
 
-    return results, errors
+# Fonction de recherche pour OnionSearch
+def search_onion_sites_onionsearch(keyword, limit=10):
+    url = f"{ONIONSEARCH_URL}{keyword}"
+
+    try:
+        response = requests.get(url, timeout=15)
+        if response.status_code != 200:
+            return [], f"❌ Erreur OnionSearch : Accès échoué (Code {response.status_code})"
+        
+        soup = BeautifulSoup(response.text, "html.parser")
+        results = []
+
+        for link in soup.find_all("a", href=True):
+            href = link["href"]
+            if ".onion" in href:
+                if href not in results:
+                    results.append(href)
+
+            if len(results) >= limit:
+                break
+
+        return results, None
+
+    except requests.RequestException as e:
+        return [], f"❌ Erreur réseau OnionSearch : {e}"
+
+# Fonction de recherche pour DarkSearch
+def search_onion_sites_darksearch(keyword, limit=10):
+    url = f"{DARKSEARCH_URL}{keyword}"
+
+    try:
+        response = requests.get(url, timeout=15)
+        if response.status_code != 200:
+            return [], f"❌ Erreur DarkSearch : Accès échoué (Code {response.status_code})"
+        
+        soup = BeautifulSoup(response.text, "html.parser")
+        results = []
+
+        for link in soup.find_all("a", href=True):
+            href = link["href"]
+            if ".onion" in href:
+                if href not in results:
+                    results.append(href)
+
+            if len(results) >= limit:
+                break
+
+        return results, None
+
+    except requests.RequestException as e:
+        return [], f"❌ Erreur réseau DarkSearch : {e}"
 
 # Route pour télécharger les résultats
 @app.route("/download_results/<keyword>")
 def download_results(keyword):
-    results, _ = search_onion_sites(keyword, limit=10)
+    results, _ = search_onion_sites_ahmia(keyword, limit=10)  # Obtenir les résultats depuis Ahmia par défaut
     filename = f"results_{keyword}.txt"
-
+    
     with open(filename, "w") as f:
-        for res in results:
-            f.write(f"{res['url']} (Source: {res['source']})\n")
-
+        f.write("\n".join(results))
+    
     return send_file(filename, as_attachment=True)
 
-# Page d'accueil et formulaire de recherche
+# Route pour la recherche
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
         keyword = request.form.get("keyword")
         limit = int(request.form.get("limit"))
+        engine = request.form.get("engine")
 
-        results, errors = search_onion_sites(keyword, limit)
+        results = {}
 
-        return render_template("index.html", results=results, errors=errors)
+        # Rechercher sur les moteurs choisis
+        if engine == "ahmia":
+            results['Ahmia'], error = search_onion_sites_ahmia(keyword, limit)
+        elif engine == "onionsearch":
+            results['OnionSearch'], error = search_onion_sites_onionsearch(keyword, limit)
+        elif engine == "darksearch":
+            results['DarkSearch'], error = search_onion_sites_darksearch(keyword, limit)
+
+        if error:
+            return render_template("index.html", error=error)
+
+        return render_template("index.html", results=results)
 
     return render_template("index.html", results=None)
 
 # Lancer l'application
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0")
